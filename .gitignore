@@ -27,3 +27,11 @@ references/papers/*.pdf
 Thumbs.db
 .idea/
 .vscode/
+
+# 历年赛题与优秀论文（第三方整理的获奖论文 + 官方赛题包）
+# 体积大且版权归属原作者/参赛学生，仅本地学习参考，不入库不推送
+历届赛题与优秀论文/
+
+# 临时下载脚本（一次性任务，用完即弃）
+_download_cumcm.py
+_download_problems.py
