@@ -1,0 +1,106 @@
+\documentclass{mcmthesis}
+
+\mcmsetup{
+  tcn = 0000000,
+  problem = A,
+  sheet = true,
+  titleinsheet = true,
+  keywordsinsheet = true,
+  titlepage = false,
+  abstract = true
+}
+
+\usepackage{amsmath,amssymb,booktabs,graphicx,cite}
+\usepackage{lastpage}
+\usepackage{hyperref}
+
+\setlength{\headheight}{13.6pt}
+\hypersetup{hypertexnames=false}
+
+\title{Paper Title Placeholder}
+\author{Team \# 0000000}
+\date{\today}
+
+\begin{document}
+
+\begin{abstract}
+Write a concise summary of the problem, assumptions, models, results, sensitivity analysis, and recommendations. Keep this page anonymous and avoid real identity information.
+
+\begin{keywords}
+Optimization; Simulation; Sensitivity Analysis
+\end{keywords}
+\end{abstract}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+\subsection{Problem Background}
+Describe the real-world background and modeling objective.
+
+\subsection{Restatement of the Problem}
+Restate each task in precise modeling language.
+
+\section{Assumptions and Justifications}
+\begin{itemize}
+  \item State each assumption and give a short justification.
+  \item Discuss the expected impact of each assumption on the model.
+\end{itemize}
+
+\section{Notation}
+\begin{table}[htbp]
+  \centering
+  \caption{Main notation}
+  \begin{tabular}{cl}
+    \toprule
+    Symbol & Meaning \\
+    \midrule
+    $x$ & Decision or state variable placeholder \\
+    $t$ & Time index placeholder \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Model Development}
+\subsection{Model 1}
+Present the model structure, equations, parameter estimation, and solution method.
+
+\begin{equation}
+  \min_x f(x) \quad \text{s.t.} \quad g_i(x) \le 0,\ i=1,\dots,m.
+\end{equation}
+
+\subsection{Model 2}
+Extend or compare the baseline model as needed.
+
+\section{Results}
+Report computational or analytical results with tables and figures.
+
+\section{Sensitivity Analysis}
+Analyze how key parameters affect the conclusions.
+
+\section{Strengths and Weaknesses}
+\subsection{Strengths}
+Summarize robust aspects of the approach.
+
+\subsection{Weaknesses}
+State limitations honestly and connect them to future improvement.
+
+\section{Conclusion}
+Summarize the final findings and recommendations.
+
+\bibliographystyle{unsrt}
+\bibliography{ref}
+
+\appendix
+\section{Additional Tables and Figures}
+Place supplementary derivations, validation details, or extended result tables here. Cite literature and data sources with \verb|\cite{...}| only; reference figures, tables, and equations with \verb|\ref{...}| or \verb|\eqref{...}| only when the label exists.
+
+\section{Code Availability}
+List anonymous filenames for code or data used in the model, if permitted by the contest rules.
+
+\section*{Report on Use of AI}
+If AI tools were used, describe the tool name, version if known, date of use, purpose, and human verification process according to the current contest rules. If no AI tools were used, replace this paragraph with the contest-approved statement.
+
+\end{document}

@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+    env:
+      MPLBACKEND: Agg
+      MPLCONFIGDIR: /tmp/mathmodel-matplotlib
+      PYTHONDONTWRITEBYTECODE: "1"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install PyYAML reportlab unidiff numpy scipy pandas matplotlib seaborn scikit-learn
+
+      - name: Compile Python sources
+        run: python -m compileall -q scripts templates/shared/code_starter
+
+      - name: Run regression tests
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+
+      - name: Run competition preflights
+        run: |
+          python scripts/doctor.py --competition cumcm --skip-tools
+          python scripts/doctor.py --competition mcm --skip-tools
+          python scripts/doctor.py --competition diangong --skip-tools

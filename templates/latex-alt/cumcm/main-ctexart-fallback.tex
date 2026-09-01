@@ -1,0 +1,32 @@
+\documentclass[UTF8,a4paper,zihao=-4]{ctexart}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,booktabs,tabularx,float,caption,hyperref,gbt7714}
+\DeclareCaptionLabelSeparator{cnquad}{\quad}
+\captionsetup{labelsep=cnquad}
+\captionsetup[table]{name=表}
+\captionsetup[figure]{name=图}
+\citestyle{numbers}
+\hypersetup{colorlinks=true,allcolors=black,breaklinks=true,hypertexnames=false}
+\ctexset{section={format=\centering\heiti\zihao{3},name={,、},number=\chinese{section},aftername=\quad},subsection={format=\heiti\zihao{-4},number=\arabic{section}.\arabic{subsection},aftername=\quad}}
+\begin{document}
+\setcounter{page}{1}
+\begin{center}{\heiti\zihao{2} 基于核心方法的研究对象建模与优化\par}\vspace{2em}{\heiti\zihao{3} 摘要\par}\end{center}
+摘要按问题、方法、结果和结论书写。正式论文不得出现真实身份信息，不得编造数值结果。
+\par\vspace{1em}\noindent{\heiti 关键词：}优化模型\quad 线性规划\quad 蒙特卡洛模拟\quad 敏感性分析
+\newpage
+\section{问题重述}\subsection{问题背景}说明背景。\subsection{问题要求}说明任务。
+\section{问题分析}\subsection{问题一的分析}说明输入、输出、目标和约束。\subsection{问题二的分析}说明新增因素。\subsection{问题三的分析}说明扩展关系。
+\section{模型假设}\begin{enumerate}\item \textbf{假设 1：} 假设内容。解释：说明理由。\item \textbf{假设 2：} 假设内容。解释：说明影响。\end{enumerate}
+\section{符号说明}\begin{table}[H]\centering\caption{主要符号说明}\begin{tabularx}{\textwidth}{cXc}\toprule 符号&说明&单位\\\midrule $i$&对象编号&--\\$J$&目标函数值&--\\\bottomrule\end{tabularx}\end{table}
+\section{数据预处理}说明数据来源、缺失值、异常值和参数构造。
+\section{模型建立与求解}\begin{equation}\max Z=\sum_i r_i x_i-\sum_i c_i x_i.\end{equation}
+\section{模型检验}说明误差、敏感性和鲁棒性检验。
+\section{模型评价与推广}说明优点、局限和推广。
+\bibliographystyle{gbt7714-numerical}\bibliography{ref}
+\appendix
+\renewcommand{\thesection}{附录\mbox{\Alph{section}}}
+\ctexset{section={format=\centering\heiti\zihao{3},name={,},number=\thesection,aftername=\quad}}
+\section{支撑材料文件列表}\begin{table}[H]\centering\caption{支撑材料文件列表}\begin{tabularx}{\textwidth}{lX}\toprule 文件名&说明\\\midrule code/q1.py&问题一程序\\result/&结果文件\\\bottomrule\end{tabularx}\end{table}
+\section{源程序代码说明}说明代码文件。
+\section{AI 工具使用详情说明}如实记录工具和采纳情况。
+\end{document}

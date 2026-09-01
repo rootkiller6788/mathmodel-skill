@@ -1,0 +1,4 @@
+interface:
+  display_name: "MathModel｜数学建模工作流"
+  short_description: "让三类数学建模竞赛从选题到终稿持续收敛"
+  default_prompt: "Use $mathmodel-skill to guide my team from problem selection through a compliant final submission."

@@ -1,0 +1,38 @@
+{
+  "name": "mathmodel-skill",
+  "version": "6.1.0",
+  "description": "A stateful, compliance-aware ten-stage workflow for CUMCM, MCM/ICM, and Diangong Cup mathematical modeling competitions.",
+  "author": {
+    "name": "handsomeZR-netizen",
+    "url": "https://github.com/handsomeZR-netizen"
+  },
+  "homepage": "https://github.com/handsomeZR-netizen/mathmodel-skill",
+  "repository": "https://github.com/handsomeZR-netizen/mathmodel-skill",
+  "license": "MIT",
+  "keywords": [
+    "math-modeling",
+    "cumcm",
+    "mcm",
+    "icm",
+    "codex-skill"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "MathModel｜数学建模工作流",
+    "shortDescription": "让三类数学建模竞赛从选题到终稿持续收敛",
+    "longDescription": "A Codex-native mathematical modeling competition workflow that carries team decisions from problem selection through modeling, robustness, writing, compliance review, and final submission. Ten staged checkpoints, persistent state, competition-specific rules, deterministic helpers, and targeted revision keep long-running collaboration coherent.",
+    "developerName": "handsomeZR-netizen",
+    "category": "Education",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/handsomeZR-netizen/mathmodel-skill",
+    "defaultPrompt": [
+      "Use $mathmodel-skill to guide my CUMCM team from kickoff to submission.",
+      "Use $mathmodel-skill to compare MCM problem choices and record the decision.",
+      "Use $mathmodel-skill to run a compliance-first final review of our modeling paper."
+    ],
+    "brandColor": "#10A37F"
+  }
+}

@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数学建模 — 图表可视化面板</title>
+<style>
+  /* ===== Reset & Base ===== */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font-size: 14px; }
+  body {
+    font-family: -apple-system, "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    background: #F8FAFC;
+    color: #1E293B;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== Left Sidebar ===== */
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: #0F4D92;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    user-select: none;
+  }
+  .sidebar-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .sidebar-header h1 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-header .sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 4px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+  }
+
+  /* figure counter badge */
+  .fig-counter {
+    display: inline-block;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    padding: 0 20px 8px;
+    margin-top: 8px;
+  }
+
+  /* category group headers */
+  .nav-group {
+    padding: 12px 20px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.35);
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-group:first-child { border-top: none; }
+  .nav-group .group-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .nav-group .group-dot.raw { background: #56B4E9; }
+  .nav-group .group-dot.process { background: #E69F00; }
+  .nav-group .group-dot.result { background: #009E73; }
+
+  .nav-list {
+    list-style: none;
+    padding: 4px 0;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .nav-list::-webkit-scrollbar { width: 3px; }
+  .nav-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+  .nav-item {
+    position: relative;
+    padding: 10px 20px 10px 28px;
+    cursor: pointer;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    border-left: 3px solid transparent;
+    transition: all 0.15s ease;
+  }
+  .nav-item:hover {
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+  }
+  .nav-item.active {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border-left-color: #FFD700;
+  }
+  .nav-item .fig-num {
+    display: inline-block;
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    margin-right: 8px;
+    font-variant-numeric: tabular-nums;
+    min-width: 18px;
+  }
+  .nav-item.active .fig-num { color: #FFD700; }
+
+  /* chart type badge — 由 data-chart 属性 + CSS ::after 自动生成 */
+  .nav-item[data-chart]::after {
+    display: inline-block;
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+    font-weight: 500;
+  }
+  .nav-item[data-chart="line"]::after { content: "折线"; background: rgba(86,180,233,0.25); color: #56B4E9; }
+  .nav-item[data-chart="bar"]::after { content: "柱状"; background: rgba(230,157,0,0.25); color: #E69F00; }
+  .nav-item[data-chart="scatter"]::after { content: "散点"; background: rgba(0,158,115,0.25); color: #009E73; }
+  .nav-item[data-chart="heatmap"]::after { content: "热力图"; background: rgba(213,94,0,0.25); color: #D55E00; }
+  .nav-item[data-chart="distribution"]::after { content: "分布"; background: rgba(204,121,167,0.25); color: #CC79A7; }
+  .nav-item[data-chart="radar"]::after { content: "雷达"; background: rgba(0,114,178,0.25); color: #0072B2; }
+  .nav-item[data-chart="other"]::after { content: "其他"; background: rgba(118,118,118,0.25); color: #CFCECE; }
+
+  /* ===== Main Content ===== */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  /* ===== Toolbar ===== */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 52px;
+    background: #fff;
+    border-bottom: 1px solid #E2E8F0;
+    flex-shrink: 0;
+  }
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .toolbar-fig-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #767676;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .toolbar-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0F4D92;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* zoom indicator */
+  .zoom-indicator {
+    font-size: 12px;
+    color: #767676;
+    min-width: 44px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .toolbar-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    height: 32px;
+    font-size: 12px;
+    border: 1px solid #E2E8F0;
+    background: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+    color: #4D4D4D;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .toolbar-actions button:hover {
+    background: #F1F5F9;
+    border-color: #CFCECE;
+  }
+  .toolbar-actions button:active {
+    background: #E2E8F0;
+  }
+  .toolbar-actions .btn-primary {
+    background: #0F4D92;
+    color: #fff;
+    border-color: #0F4D92;
+  }
+  .toolbar-actions .btn-primary:hover {
+    background: #143E72;
+    border-color: #143E72;
+  }
+  .toolbar-actions .btn-primary:active {
+    background: #0C3460;
+  }
+  .toolbar-actions .btn-active {
+    background: #E2E8F0;
+    border-color: #CFCECE;
+    color: #0F4D92;
+    font-weight: 600;
+  }
+  .toolbar-divider {
+    width: 1px;
+    height: 20px;
+    background: #E2E8F0;
+    margin: 0 4px;
+  }
+
+  /* ===== Figure View Area ===== */
+  .figure-view {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    overflow: auto;
+    background: #F1F5F9;
+    position: relative;
+  }
+  .figure-page {
+    display: none;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .figure-page.active { display: flex; }
+
+  .figure-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .figure-svg {
+    width: 100%;
+    height: auto;
+    max-height: calc(100vh - 220px);
+    border: 1px solid #E2E8F0;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    transition: transform 0.2s ease, filter 0.3s ease;
+    transform-origin: center center;
+  }
+  .figure-svg[style*="scale"] {
+    transform-origin: top left;
+  }
+
+  /* grayscale mode */
+  .figure-view.grayscale .figure-svg {
+    filter: grayscale(100%);
+  }
+
+  /* figure caption / metadata */
+  .figure-meta {
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #4D4D4D;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .figure-meta .fig-caption-label {
+    font-weight: 600;
+    color: #0F4D92;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .figure-meta .fig-caption-text {
+    color: #4D4D4D;
+    flex: 1;
+  }
+
+  /* ===== Metadata Panel ===== */
+  .metadata-panel {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 240px;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    font-size: 12px;
+    z-index: 20;
+    display: none;
+    overflow: hidden;
+  }
+  .metadata-panel.show { display: block; }
+  .metadata-panel-header {
+    padding: 10px 14px;
+    font-weight: 600;
+    color: #0F4D92;
+    border-bottom: 1px solid #E2E8F0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .metadata-panel-header .close-btn {
+    cursor: pointer;
+    color: #94A3B8;
+    font-size: 16px;
+    line-height: 1;
+  }
+  .metadata-panel-header .close-btn:hover { color: #4D4D4D; }
+  .metadata-panel-body {
+    padding: 12px 14px;
+  }
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #F1F5F9;
+  }
+  .meta-row:last-child { border-bottom: none; }
+  .meta-label {
+    color: #767676;
+    font-size: 11px;
+  }
+  .meta-value {
+    color: #1E293B;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ===== Checklist Panel ===== */
+  .checklist-panel {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 320px;
+    max-height: calc(100vh - 120px);
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    font-size: 12px;
+    z-index: 20;
+    display: none;
+    overflow: hidden;
+    flex-direction: column;
+  }
+  .checklist-panel.show { display: flex; }
+  .checklist-header {
+    padding: 10px 14px;
+    font-weight: 600;
+    color: #0F4D92;
+    border-bottom: 1px solid #E2E8F0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .checklist-header .close-btn {
+    cursor: pointer;
+    color: #94A3B8;
+    font-size: 16px;
+    line-height: 1;
+  }
+  .checklist-header .close-btn:hover { color: #4D4D4D; }
+  .checklist-progress {
+    padding: 8px 14px;
+    background: #F8FAFC;
+    border-bottom: 1px solid #E2E8F0;
+    flex-shrink: 0;
+  }
+  .progress-bar {
+    height: 4px;
+    background: #E2E8F0;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: #009E73;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+  .checklist-body {
+    padding: 10px 14px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    cursor: pointer;
+  }
+  .checklist-item:hover { background: #F8FAFC; margin: 0 -14px; padding: 6px 14px; }
+  .checklist-item input[type="checkbox"] {
+    margin-top: 2px;
+    accent-color: #009E73;
+    flex-shrink: 0;
+  }
+  .checklist-item label {
+    color: #1E293B;
+    cursor: pointer;
+    flex: 1;
+    line-height: 1.4;
+  }
+  .checklist-item.checked label {
+    color: #94A3B8;
+    text-decoration: line-through;
+  }
+  .checklist-section {
+    font-weight: 600;
+    color: #0F4D92;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 0 4px;
+    border-bottom: 1px solid #E2E8F0;
+    margin-bottom: 2px;
+  }
+  .checklist-section:first-child { padding-top: 0; }
+
+  /* ===== Bottom Status Bar ===== */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 32px;
+    background: #0F4D92;
+    color: rgba(255,255,255,0.8);
+    font-size: 11px;
+    flex-shrink: 0;
+    gap: 16px;
+  }
+  .status-bar .status-left,
+  .status-bar .status-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .status-item .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+  .status-item .dot.pass { background: #009E73; }
+  .status-item .dot.warn { background: #E69F00; }
+  .status-item .dot.fail { background: #D55E00; }
+  .diversity-tags {
+    display: flex;
+    gap: 4px;
+  }
+  .diversity-tag {
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .diversity-tag.used { background: rgba(0,158,115,0.3); color: #fff; }
+  .diversity-tag.unused { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); }
+
+  /* ===== Placeholder ===== */
+  .placeholder {
+    color: #94A3B8;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+  }
+  .placeholder-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+    opacity: 0.3;
+  }
+
+  /* ===== Loading overlay ===== */
+  .loading-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(241,245,249,0.7);
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  .loading-overlay.show { display: flex; }
+  .loading-spinner {
+    width: 28px;
+    height: 28px;
+    border: 2px solid #E2E8F0;
+    border-top-color: #0F4D92;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== Keyboard shortcut hint ===== */
+  .kbd-hint {
+    position: fixed;
+    bottom: 40px;
+    right: 24px;
+    font-size: 11px;
+    color: #94A3B8;
+    letter-spacing: 0.3px;
+    pointer-events: none;
+    opacity: 0.6;
+    z-index: 5;
+  }
+  .kbd-hint kbd {
+    display: inline-block;
+    padding: 1px 5px;
+    font-size: 10px;
+    font-family: inherit;
+    background: #E2E8F0;
+    border-radius: 3px;
+    border: 1px solid #CFCECE;
+    margin: 0 1px;
+  }
+
+  /* ===== Fullscreen ===== */
+  .figure-view:fullscreen {
+    padding: 32px;
+    background: #F1F5F9;
+  }
+  .figure-view:fullscreen .figure-svg {
+    max-height: calc(100vh - 140px);
+  }
+  .figure-view:fullscreen .figure-meta {
+    display: flex;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Sidebar ===== -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h1>可视化面板</h1>
+    <div class="sub">Visualization Panel · tools/figure</div>
+  </div>
+  <div class="fig-counter" id="figCounter">1 / 3</div>
+
+  <!--
+    三类图分组导航
+    data-chart 属性用于图型多样性统计
+    可用 chart-type: line / bar / scatter / heatmap / distribution / radar / other
+    按实际题目修改以下 li 列表
+  -->
+  <ul class="nav-list" id="navList">
+    <li class="nav-group"><span class="group-dot raw"></span>原始数据</li>
+    <li class="nav-item active" data-fig="figure1" data-chart="line" data-desc="描述1">
+      <span class="fig-num">1</span> 图1标题
+    </li>
+    <!-- 按需增减原始数据图 -->
+
+    <li class="nav-group"><span class="group-dot process"></span>中间过程</li>
+    <li class="nav-item" data-fig="figure2" data-chart="bar" data-desc="描述2">
+      <span class="fig-num">2</span> 图2标题
+    </li>
+    <!-- 按需增减中间过程图 -->
+
+    <li class="nav-group"><span class="group-dot result"></span>最终结果</li>
+    <li class="nav-item" data-fig="figure3" data-chart="scatter" data-desc="描述3">
+      <span class="fig-num">3</span> 图3标题
+    </li>
+    <!-- 按需增减最终结果图 -->
+  </ul>
+</nav>
+
+<!-- ===== Main ===== -->
+<main class="main-content">
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <span class="toolbar-fig-label">Figure</span>
+      <span class="toolbar-title" id="figTitle">图1标题</span>
+    </div>
+    <div class="toolbar-actions">
+      <button onclick="zoomOut()" title="缩小 (Ctrl+-)">−</button>
+      <span class="zoom-indicator" id="zoomLevel">100%</span>
+      <button onclick="zoomIn()" title="放大 (Ctrl+=)">+</button>
+      <button onclick="zoomReset()" title="重置 (Ctrl+0)">↺</button>
+      <div class="toolbar-divider"></div>
+      <button id="btnGrayscale" onclick="toggleGrayscale()" title="灰度预览 (G)">灰度</button>
+      <button id="btnMetadata" onclick="toggleMetadata()" title="图表信息 (I)">ℹ</button>
+      <button id="btnChecklist" onclick="toggleChecklist()" title="反冗余清单 (L)">✓ 清单</button>
+      <div class="toolbar-divider"></div>
+      <button class="btn-primary" onclick="exportSVG()" title="导出 SVG (Ctrl+E)">SVG</button>
+      <button onclick="exportPNG()" title="导出 PNG (Ctrl+Shift+E)">PNG</button>
+      <div class="toolbar-divider"></div>
+      <button onclick="toggleFullscreen()" title="全屏 (F11)">⛶</button>
+    </div>
+  </div>
+
+  <div class="figure-view" id="figureView">
+    <!-- loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-spinner"></div>
+    </div>
+
+    <!-- metadata panel -->
+    <div class="metadata-panel" id="metadataPanel">
+      <div class="metadata-panel-header">
+        图表信息
+        <span class="close-btn" onclick="toggleMetadata()">×</span>
+      </div>
+      <div class="metadata-panel-body" id="metadataBody">
+        <!-- 由 JS 动态填充 -->
+      </div>
+    </div>
+
+    <!-- checklist panel -->
+    <div class="checklist-panel" id="checklistPanel">
+      <div class="checklist-header">
+        反冗余检查清单
+        <span class="close-btn" onclick="toggleChecklist()">×</span>
+      </div>
+      <div class="checklist-progress">
+        <span id="checklistProgressText">0 / 8 已完成</span>
+        <div class="progress-bar">
+          <div class="progress-bar-fill" id="checklistProgressBar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="checklist-body">
+        <div class="checklist-section">面板逻辑</div>
+        <div class="checklist-item" data-check="1">
+          <input type="checkbox" id="ck1" onchange="updateChecklistProgress()">
+          <label for="ck1">每个面板回答一个唯一问题</label>
+        </div>
+        <div class="checklist-item" data-check="2">
+          <input type="checkbox" id="ck2" onchange="updateChecklistProgress()">
+          <label for="ck2">面板 b 不是重复展示面板 a 的相同数据</label>
+        </div>
+        <div class="checklist-item" data-check="3">
+          <input type="checkbox" id="ck3" onchange="updateChecklistProgress()">
+          <label for="ck3">每个面板有独立的坐标轴词汇</label>
+        </div>
+
+        <div class="checklist-section">图型多样性</div>
+        <div class="checklist-item" data-check="4">
+          <input type="checkbox" id="ck4" onchange="updateChecklistProgress()">
+          <label for="ck4">全文图型种类 ≥ 3 种</label>
+        </div>
+        <div class="checklist-item" data-check="5">
+          <input type="checkbox" id="ck5" onchange="updateChecklistProgress()">
+          <label for="ck5">每类图内部覆盖 ≥ 2 种视角</label>
+        </div>
+
+        <div class="checklist-section">配色与格式</div>
+        <div class="checklist-item" data-check="6">
+          <input type="checkbox" id="ck6" onchange="updateChecklistProgress()">
+          <label for="ck6">跨面板同一方法颜色一致</label>
+        </div>
+        <div class="checklist-item" data-check="7">
+          <input type="checkbox" id="ck7" onchange="updateChecklistProgress()">
+          <label for="ck7">灰度预览下各类可区分</label>
+        </div>
+        <div class="checklist-item" data-check="8">
+          <input type="checkbox" id="ck8" onchange="updateChecklistProgress()">
+          <label for="ck8">无红绿对比（色盲友好）</label>
+        </div>
+      </div>
+    </div>
+
+    <!--
+      手动修改以下页面
+      id="page-{文件名前缀}"，data="figures/{文件名前缀}.svg"
+      按实际题目修改，每个 nav-item 对应一个 page
+    -->
+    <div class="figure-page active" id="page-figure1">
+      <div class="figure-container">
+        <object data="figure1.svg" type="image/svg+xml" class="figure-svg" id="svg-figure1"></object>
+        <div class="figure-meta">
+          <span class="fig-caption-label">Figure 1.</span>
+          <span class="fig-caption-text" id="desc-figure1">描述1</span>
+        </div>
+      </div>
+    </div>
+    <div class="figure-page" id="page-figure2">
+      <div class="figure-container">
+        <object data="figure2.svg" type="image/svg+xml" class="figure-svg" id="svg-figure2"></object>
+        <div class="figure-meta">
+          <span class="fig-caption-label">Figure 2.</span>
+          <span class="fig-caption-text" id="desc-figure2">描述2</span>
+        </div>
+      </div>
+    </div>
+    <div class="figure-page" id="page-figure3">
+      <div class="figure-container">
+        <object data="figure3.svg" type="image/svg+xml" class="figure-svg" id="svg-figure3"></object>
+        <div class="figure-meta">
+          <span class="fig-caption-label">Figure 3.</span>
+          <span class="fig-caption-text" id="desc-figure3">描述3</span>
+        </div>
+      </div>
+    </div>
+    <!-- 按需增减以上页面 -->
+  </div>
+
+  <!-- ===== Bottom Status Bar ===== -->
+  <div class="status-bar">
+    <div class="status-left">
+      <div class="status-item">
+        <span class="dot pass"></span>
+        <span>图型种类: <strong id="diversityCount">0</strong> / ≥3</span>
+      </div>
+      <div class="status-item" id="diversityDetail">
+        <div class="diversity-tags" id="diversityTags">
+          <!-- 由 JS 动态填充 -->
+        </div>
+      </div>
+    </div>
+    <div class="status-right">
+      <div class="status-item">
+        <span>图表: <strong id="totalFigs">0</strong></span>
+      </div>
+      <div class="status-item">
+        <span>分类: 原始 <strong id="countRaw">0</strong> / 过程 <strong id="countProcess">0</strong> / 结果 <strong id="countResult">0</strong></span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="kbd-hint">
+  <kbd>G</kbd> 灰度 &nbsp;|&nbsp; <kbd>I</kbd> 信息 &nbsp;|&nbsp; <kbd>L</kbd> 清单 &nbsp;|&nbsp; <kbd>Ctrl</kbd>+<kbd>+</kbd>/<kbd>-</kbd> 缩放 &nbsp;|&nbsp; <kbd>←</kbd><kbd>→</kbd> 切图
+</div>
+
+<script>
+  let currentFig = 'figure1';
+  let zoomLevel = 1;
+  let isGrayscale = false;
+
+  const navItems = document.querySelectorAll('.nav-item');
+  const pages = {};
+  document.querySelectorAll('.figure-page').forEach(p => {
+    pages[p.id.replace('page-', '')] = p;
+  });
+
+  // ===== Initialize =====
+  function init() {
+    updateDiversityStats();
+    updateChecklistProgress();
+  }
+
+  // ===== Navigation =====
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      navItems.forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+      const fig = item.dataset.fig;
+      Object.values(pages).forEach(p => p.classList.remove('active'));
+      if (pages[fig]) pages[fig].classList.add('active');
+      document.getElementById('figTitle').textContent = item.textContent.replace(/[\n\r]+/g, ' ').trim();
+      currentFig = fig;
+      zoomReset();
+      updateCounter();
+    });
+  });
+
+  function updateCounter() {
+    const total = navItems.length;
+    const idx = Array.from(navItems).indexOf(document.querySelector('.nav-item.active')) + 1;
+    document.getElementById('figCounter').textContent = idx + ' / ' + total;
+  }
+
+  // ===== SVG Loading =====
+  document.querySelectorAll('.figure-page object').forEach(obj => {
+    obj.addEventListener('load', () => {
+      const page = obj.closest('.figure-page');
+      if (page) page.style.opacity = '1';
+    });
+    const page = obj.closest('.figure-page');
+    if (page) page.style.opacity = '0';
+  });
+
+  // ===== Zoom =====
+  function getActiveSVGElement() {
+    if (!currentFig) return null;
+    const obj = document.getElementById('svg-' + currentFig);
+    if (!obj) return null;
+    try {
+      const svgDoc = obj.contentDocument;
+      if (!svgDoc) return null;
+      return svgDoc.querySelector('svg');
+    } catch(e) { return null; }
+  }
+
+  function zoomIn() {
+    zoomLevel = Math.min(zoomLevel * 1.25, 5);
+    applyZoom();
+  }
+  function zoomOut() {
+    zoomLevel = Math.max(zoomLevel / 1.25, 0.25);
+    applyZoom();
+  }
+  function zoomReset() {
+    zoomLevel = 1;
+    applyZoom();
+  }
+  function applyZoom() {
+    const svg = getActiveSVGElement();
+    if (svg) svg.style.transform = 'scale(' + zoomLevel + ')';
+    document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+  }
+
+  // ===== Grayscale Toggle =====
+  function toggleGrayscale() {
+    isGrayscale = !isGrayscale;
+    document.getElementById('figureView').classList.toggle('grayscale', isGrayscale);
+    document.getElementById('btnGrayscale').classList.toggle('btn-active', isGrayscale);
+  }
+
+  // ===== Metadata Panel =====
+  function toggleMetadata() {
+    const panel = document.getElementById('metadataPanel');
+    const checklistPanel = document.getElementById('checklistPanel');
+    checklistPanel.classList.remove('show');
+    panel.classList.toggle('show');
+    if (panel.classList.contains('show')) updateMetadata();
+  }
+
+  function updateMetadata() {
+    const item = document.querySelector('.nav-item.active');
+    if (!item) return;
+    const fig = item.dataset.fig;
+    const obj = document.getElementById('svg-' + fig);
+    let svgWidth = '—', svgHeight = '—', fileSize = '—';
+    try {
+      const svgDoc = obj.contentDocument;
+      if (svgDoc) {
+        const svgEl = svgDoc.querySelector('svg');
+        if (svgEl) {
+          svgWidth = svgEl.getAttribute('width') || '—';
+          svgHeight = svgEl.getAttribute('height') || '—';
+        }
+      }
+    } catch(e) {}
+    const body = document.getElementById('metadataBody');
+    body.innerHTML = `
+      <div class="meta-row"><span class="meta-label">文件名</span><span class="meta-value">${fig}.svg</span></div>
+      <div class="meta-row"><span class="meta-label">分类</span><span class="meta-value">${fig.split('_')[0]}</span></div>
+      <div class="meta-row"><span class="meta-label">宽度</span><span class="meta-value">${svgWidth}</span></div>
+      <div class="meta-row"><span class="meta-label">高度</span><span class="meta-value">${svgHeight}</span></div>
+      <div class="meta-row"><span class="meta-label">格式</span><span class="meta-value">SVG (矢量)</span></div>
+      <div class="meta-row"><span class="meta-label">DPI</span><span class="meta-value">矢量无损</span></div>
+    `;
+  }
+
+  // ===== Checklist Panel =====
+  function toggleChecklist() {
+    const panel = document.getElementById('checklistPanel');
+    const metadataPanel = document.getElementById('metadataPanel');
+    metadataPanel.classList.remove('show');
+    panel.classList.toggle('show');
+  }
+
+  function updateChecklistProgress() {
+    const checkboxes = document.querySelectorAll('.checklist-panel input[type="checkbox"]');
+    const total = checkboxes.length;
+    const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+    document.getElementById('checklistProgressText').textContent = checked + ' / ' + total + ' 已完成';
+    document.getElementById('checklistProgressBar').style.width = (checked / total * 100) + '%';
+    // update item visual state
+    document.querySelectorAll('.checklist-item').forEach(item => {
+      const cb = item.querySelector('input[type="checkbox"]');
+      item.classList.toggle('checked', cb.checked);
+    });
+  }
+
+  // ===== Diversity Stats =====
+  function updateDiversityStats() {
+    const allTypes = new Set();
+    let rawCount = 0, processCount = 0, resultCount = 0;
+    navItems.forEach(item => {
+      const chart = item.dataset.chart;
+      const fig = item.dataset.fig;
+      if (chart) allTypes.add(chart);
+      if (fig.startsWith('raw')) rawCount++;
+      else if (fig.startsWith('process')) processCount++;
+      else if (fig.startsWith('result')) resultCount++;
+    });
+    document.getElementById('diversityCount').textContent = allTypes.size;
+    document.getElementById('totalFigs').textContent = navItems.length;
+    document.getElementById('countRaw').textContent = rawCount;
+    document.getElementById('countProcess').textContent = processCount;
+    document.getElementById('countResult').textContent = resultCount;
+
+    // render tags
+    const allChartTypes = ['line', 'bar', 'scatter', 'heatmap', 'distribution', 'radar', 'other'];
+    const chartLabels = {line:'折线', bar:'柱状', scatter:'散点', heatmap:'热力图', distribution:'分布', radar:'雷达', other:'其他'};
+    const tagsEl = document.getElementById('diversityTags');
+    tagsEl.innerHTML = '';
+    allChartTypes.forEach(type => {
+      const tag = document.createElement('span');
+      tag.className = 'diversity-tag ' + (allTypes.has(type) ? 'used' : 'unused');
+      tag.textContent = chartLabels[type];
+      tagsEl.appendChild(tag);
+    });
+
+    // update diversity dot color
+    const dot = document.querySelector('.status-item .dot');
+    if (dot) {
+      dot.className = 'dot ' + (allTypes.size >= 3 ? 'pass' : 'warn');
+    }
+  }
+
+  // ===== Keyboard Shortcuts =====
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && (e.key === '=' || e.key === '+')) { e.preventDefault(); zoomIn(); }
+    if (e.ctrlKey && e.key === '-') { e.preventDefault(); zoomOut(); }
+    if (e.ctrlKey && e.key === '0') { e.preventDefault(); zoomReset(); }
+    if (e.ctrlKey && (e.key === 'e' || e.key === 'E')) { e.preventDefault(); exportSVG(); }
+    if (e.ctrlKey && e.shiftKey && (e.key === 'e' || e.key === 'E')) { e.preventDefault(); exportPNG(); }
+    if (e.key === 'g' || e.key === 'G') { if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); toggleGrayscale(); } }
+    if (e.key === 'i' || e.key === 'I') { if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); toggleMetadata(); } }
+    if (e.key === 'l' || e.key === 'L') { if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); toggleChecklist(); } }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const active = document.querySelector('.nav-item.active');
+      const prev = active ? active.previousElementSibling : null;
+      if (prev && prev.classList.contains('nav-item')) prev.click();
+    }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      const active = document.querySelector('.nav-item.active');
+      let next = active ? active.nextElementSibling : null;
+      // skip group headers
+      while (next && !next.classList.contains('nav-item')) {
+        next = next.nextElementSibling;
+      }
+      if (next && next.classList.contains('nav-item')) next.click();
+    }
+    if (e.key === 'F11') { e.preventDefault(); toggleFullscreen(); }
+  });
+
+  // ===== Fullscreen =====
+  function toggleFullscreen() {
+    const el = document.getElementById('figureView');
+    if (!document.fullscreenElement) {
+      el.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  // ===== Export SVG =====
+  function exportSVG() {
+    if (!currentFig) { alert('请先选择一张图表'); return; }
+    const obj = document.getElementById('svg-' + currentFig);
+    if (!obj) return;
+    try {
+      const svgDoc = obj.contentDocument;
+      if (!svgDoc) { alert('SVG 尚未加载完成，请稍后再试'); return; }
+      const svgEl = svgDoc.querySelector('svg');
+      if (!svgEl) return;
+      svgEl.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      const serializer = new XMLSerializer();
+      const svgStr = '<?xml version="1.0" encoding="UTF-8"?>\n' + serializer.serializeToString(svgEl);
+      const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = currentFig + '.svg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch(e) { alert('导出失败: ' + e.message); }
+  }
+
+  // ===== Export PNG =====
+  function exportPNG() {
+    if (!currentFig) { alert('请先选择一张图表'); return; }
+    const obj = document.getElementById('svg-' + currentFig);
+    if (!obj) return;
+    try {
+      const svgDoc = obj.contentDocument;
+      if (!svgDoc) { alert('SVG 尚未加载完成，请稍后再试'); return; }
+      const svgEl = svgDoc.querySelector('svg');
+      if (!svgEl) return;
+      const svgData = new XMLSerializer().serializeToString(svgEl);
+      const canvas = document.createElement('canvas');
+      const dpr = 3; // 300 DPI output
+      let width = parseInt(svgEl.getAttribute('width')) || 800;
+      let height = parseInt(svgEl.getAttribute('height')) || 600;
+      if (isNaN(width) || width < 100) width = 800;
+      if (isNaN(height) || height < 100) height = 600;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      const img = new Image();
+      const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      img.onload = () => {
+        ctx.fillStyle = isGrayscale ? '#fff' : '#fff';
+        ctx.fillRect(0, 0, width, height);
+        if (isGrayscale) ctx.filter = 'grayscale(100%)';
+        ctx.drawImage(img, 0, 0, width, height);
+        URL.revokeObjectURL(url);
+        canvas.toBlob((pngBlob) => {
+          if (!pngBlob) { alert('PNG 生成失败'); return; }
+          const pngUrl = URL.createObjectURL(pngBlob);
+          const a = document.createElement('a');
+          a.href = pngUrl;
+          a.download = currentFig + (isGrayscale ? '_grayscale' : '') + '.png';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(pngUrl);
+        }, 'image/png');
+      };
+      img.onerror = () => { alert('PNG 渲染失败'); URL.revokeObjectURL(url); };
+      img.src = url;
+    } catch(e) { alert('导出失败: ' + e.message); }
+  }
+
+  // ===== Wheel zoom =====
+  document.getElementById('figureView').addEventListener('wheel', (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      if (e.deltaY < 0) zoomIn(); else zoomOut();
+    }
+  }, { passive: false });
+
+  // ===== Init =====
+  init();
+</script>
+
+</body>
+</html>
