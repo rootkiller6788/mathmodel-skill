@@ -1,7 +1,6 @@
 # mathmodel-skill — 数学建模三竞赛统一工作流
 
 > 三合一数学建模 Skill：覆盖 **选题 → 建模 → 求解 → 稳健 → 写作 → 终审 → 提交合规** 全链路与全工具。
-> 由三个开源 skill 的核心能力合并而成：`mathmodel-skill`（10 阶段流程 + 反馈层 + 三竞赛包）× `math-modeling-skill`（三角色执行引擎 + 5 门禁质检 + 7 类算法资料 + 6 大工具）× `mathmodel-latex-skill`（LaTeX 编译预检 + 匿名检查 + 优秀论文风格规则）。
 
 [![License](https://img.shields.io/badge/license-MIT-22c55e)](./LICENSE)
 [![Competitions](https://img.shields.io/badge/CUMCM%20%7C%20MCM%2FICM%20%7C%20Diangong-workflow-f97316)](./competitions/)
@@ -16,18 +15,18 @@
 
 ## 核心能力矩阵
 
-| 能力 | 来源 | 说明 |
-|---|---|---|
-| **10 阶段项目流程** | mathmodel-skill | Stage 0 启动 → 9 终审；每阶段输入/产物/退出条件明确，可按 Qi 局部回修 |
-| **三角色执行引擎** | math-modeling-skill | 建模手 / 编程手 / 论文手三份角色手册，负责阶段内实际执行 |
-| **5 门禁独立质检** | math-modeling-skill | `M1/P1/P2/W1/W2` 在每个交付物边界派发只读 Subagent 验收，`FAIL` 必须返工 |
-| **L1–L4 反馈层** | mathmodel-skill | 阶段打分 → 跨阶段回检 → 独立 Panel → 证据校准（`championship` 启用 L3/L4） |
-| **三竞赛包** | mathmodel-skill | cumcm（91 来源/59 样本）、mcm（COMAP 2027）、diangong（官网基线）各自的规则/反模式/写作启发/评分覆盖 |
-| **7 类算法资料** | math-modeling-skill | 优化/预测/评价/图论/统计/综合/机器学习，含公式、参数、代码要点，与 `model_catalog.md` 双轨路由 |
-| **出版级可视化** | math-modeling-skill | `tools/figure`：数据剖析 → 选图 → 三类图体系（原始/过程/结果）→ 自检闭环 → SVG+PNG 导出 |
-| **双引擎论文搜索** | math-modeling-skill | `tools/paper_search`：OpenAlex + AnySearch 并行检索与交叉核验 |
-| **LaTeX 编译 + 预检** | mathmodel-latex-skill | `scripts/render_paper.py` 主编译链路 + `scripts/latex_check/` 四类预检（环境/引用/关键词/匿名 PDF） |
-| **Word 降级路径** | math-modeling-skill | `tools/docx`：OMML 公式、三线表、修订批注（用户显式要求时使用） |
+| 能力 | 说明 |
+|---|---|
+| **10 阶段项目流程** | Stage 0 启动 → 9 终审；每阶段输入/产物/退出条件明确，可按 Qi 局部回修 |
+| **三角色执行引擎** | 建模手 / 编程手 / 论文手三份角色手册，负责阶段内实际执行 |
+| **5 门禁独立质检** | `M1/P1/P2/W1/W2` 在每个交付物边界派发只读 Subagent 验收，`FAIL` 必须返工 |
+| **L1–L4 反馈层** | 阶段打分 → 跨阶段回检 → 独立 Panel → 证据校准（`championship` 启用 L3/L4） |
+| **三竞赛包** | cumcm（91 来源/59 样本）、mcm（COMAP 2027）、diangong（官网基线）各自的规则/反模式/写作启发/评分覆盖 |
+| **7 类算法资料** | 优化/预测/评价/图论/统计/综合/机器学习，含公式、参数、代码要点，与 `model_catalog.md` 双轨路由 |
+| **出版级可视化** | `tools/figure`：数据剖析 → 选图 → 三类图体系（原始/过程/结果）→ 自检闭环 → SVG+PNG 导出 |
+| **双引擎论文搜索** | `tools/paper_search`：OpenAlex + AnySearch 并行检索与交叉核验 |
+| **LaTeX 编译 + 预检** | `scripts/render_paper.py` 主编译链路 + `scripts/latex_check/` 四类预检（环境/引用/关键词/匿名 PDF） |
+| **Word 降级路径** | `tools/docx`：OMML 公式、三线表、修订批注（用户显式要求时使用） |
 
 ## 快速开始
 
