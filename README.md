@@ -148,6 +148,15 @@ python scripts/latex_check/check_latex_env.py --contest cumcm
 - 生成论文仅供参考；结构与格式必须符合当届官方规则，任何 AI 生成的公式、代码、事实和引用必须由团队复核。
 - 经验数据只作参照（国赛观察分位 / 美赛·电工杯 n=0），不是官方评分线，也不能推导获奖概率。
 
+## 来源与合规
+
+- [使用指南.md](使用指南.md) — 使用前必读：交付物边界与提交前人工核对清单
+- [SOURCES.md](SOURCES.md) — 三个 MIT 上游来源与本仓库的合并关系
+- [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) — 第三方合规与运行时依赖说明
+- [tools/README.md](tools/README.md) — 子工具链入口及各自许可（含 pdf 的 Proprietary 声明）
+
+规则会变化：竞赛规则以当届官方通知为准，本仓库 `current_rules.md` 只保存最近核对基线。
+
 ## License
 
 MIT License（详见 [LICENSE](LICENSE)）。运行时依赖与外部资料遵循各自许可（详见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)）。
