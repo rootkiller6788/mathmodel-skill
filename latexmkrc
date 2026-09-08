@@ -1,3 +1,8 @@
+# mathmodel-skill latexmk build config.
+# Canonical copy lives at the repository root; a mirror ships with the
+# latex-alt CUMCM fallback class at templates/latex-alt/cumcm/latexmkrc.
+# Keep them in sync (guarded by tests/test_mirror_parity.py).
+
 $pdf_mode = 5;
 $xelatex = 'xelatex -synctex=1 -interaction=nonstopmode -file-line-error %O %S';
 
