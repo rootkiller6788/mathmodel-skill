@@ -2,6 +2,16 @@
 
 这里的脚本分为两组：比赛过程中使用的运行时工具，以及维护资料库时才使用的离线工具。下列命令均假设当前目录是 skill 根目录；用户项目中的动态文件统一放在项目工作目录，不写回 skill。
 
+## 开发 / 测试依赖
+
+维护者本地跑回归测试与预检前，先安装根目录的开发依赖（与 CI 的 `pip install` 步骤一致）：
+
+```bash
+python -m pip install -r requirements-dev.txt
+```
+
+离线资料维护工具另需精简依赖：`python -m pip install -r scripts/requirements-maintenance.txt`。
+
 ## 运行时工具
 
 ### `doctor.py` — 环境与包结构预检

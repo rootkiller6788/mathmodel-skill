@@ -1,0 +1,22 @@
+# Dev / test / preflight dependencies for mathmodel-skill maintainers.
+# Mirrors the pip install step in .github/workflows/ci.yml so local checks
+# match CI. Runtime "example" packages for actual contest modeling live in
+# templates/shared/requirements.txt and are intentionally NOT listed here.
+#
+#   python -m pip install -r requirements-dev.txt
+#
+# The offline corpus-maintenance tools have their own slim manifest:
+#   python -m pip install -r scripts/requirements-maintenance.txt
+
+# Regression test suite (tests/)
+PyYAML>=6.0
+reportlab>=4.0
+unidiff>=0.7
+
+# Preflight (scripts/doctor.py --skip-tools) and figure tooling
+numpy>=1.24
+scipy>=1.11
+pandas>=2.0
+matplotlib>=3.7
+seaborn>=0.12
+scikit-learn>=1.3
