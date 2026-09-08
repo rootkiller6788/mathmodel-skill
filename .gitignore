@@ -1,4 +1,4 @@
-# 用户运行时产物
+# ============ 用户运行时产物（写在工作区，不入 skill 仓库） ============
 state/decision_log.json
 state/scores.json
 state/iteration_counts.json
@@ -6,27 +6,50 @@ results/
 figures/
 paper_workspace/
 paper_output/
+support_materials/
+
+# ============ LaTeX / 编译中间产物 ============
 *.aux
 *.log
 *.toc
 *.out
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.synctex.gz
+*.fls
+*.fdb_latexmk
 
-# Python
+# ============ Python ============
 __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
 .venv/
 venv/
+build/
+dist/
+*.egg-info/
+.coverage
+htmlcov/
+.ruff_cache/
+.mypy_cache/
+.coverage.*
 
-# 蒸馏后 PDF 已删, 防误提交大文件
+# 蒸馏后 PDF 已删，防误提交大文件
 references/papers/*.pdf
 
-# OS / 编辑器
+# ============ OS / 编辑器 ============
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
+
+# 通用备份 / 合并残留
+*.bak
+*.orig
+*.rej
 
 # 历年赛题与优秀论文（第三方整理的获奖论文 + 官方赛题包）
 # 体积大且版权归属原作者/参赛学生，仅本地学习参考，不入库不推送
