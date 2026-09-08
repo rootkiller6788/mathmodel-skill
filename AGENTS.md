@@ -37,6 +37,8 @@ python scripts/doctor.py --competition diangong --skip-tools
 git diff --check
 ```
 
+A single command runs the equivalent suite above: `python scripts/verify_all.py` (add `--full` to skip `doctor --skip-tools`).
+
 Maintainers with the Codex skill/plugin creator tooling installed should also run its current `quick_validate.py` and `validate_plugin.py` entrypoints. Do not hard-code a machine-specific installation path into contributor commands.
 
 Runtime evaluation prompts should explicitly invoke `$mathmodel-skill`. Negative-trigger tests should confirm that generic model-selection and non-competition writing requests do not invoke it.

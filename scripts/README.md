@@ -12,6 +12,15 @@ python -m pip install -r requirements-dev.txt
 
 离线资料维护工具另需精简依赖：`python -m pip install -r scripts/requirements-maintenance.txt`。
 
+## 一键验证 `verify_all.py`
+
+维护者在发布/大改后，可用单条命令跑完 AGENTS.md 的完整验证套件（compileall → 回归测试 → 三竞赛 doctor 预检 → `git diff --check`），逐项输出 PASS/FAIL，失败时返回非零：
+
+```bash
+python scripts/verify_all.py       # 默认 doctor --skip-tools（无需 Pandoc/TeX）
+python scripts/verify_all.py --full
+```
+
 ## 运行时工具
 
 ### `doctor.py` — 环境与包结构预检
