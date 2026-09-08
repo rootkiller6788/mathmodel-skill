@@ -3,7 +3,7 @@
 #   python -m pip install -r scripts/requirements-maintenance.txt
 
 # PDF text extraction for ingest_papers.py
-pdfplumber>=0.10
+pdfplumber>=0.11.10
 
 # Official exhibition downloader / image-to-PDF reconstruction
 requests>=2.34.2
