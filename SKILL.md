@@ -119,6 +119,7 @@ L1 每阶段轻量打分，L2 跨阶段回检，L3 独立 Panel，L4 证据校�
   - `scripts/latex_check/check_pdf.py main.pdf [--max-pages N --max-size-mb M] --identity-mode strict`（页数/大小/匿名）
 - **可选官方类降级**：`templates/latex-alt/cumcm/`（内置轻量 `cumcmthesis.cls` 兼容类 + `ctexart` fallback）与 `templates/latex-alt/mcm-icm/`，非默认。
 - **默认 LaTeX + PDF**；用户显式要求 Word 时走 `tools/docx` 降级路径。
+- 主树 `templates/latex/<comp>/main.tex` 是 `render_paper.py` 的**唯一**装配源；`tools/latex/assets/templates/` 与 `templates/latex-alt/` 分别是子工具镜像与降级类，改动主树模板时须同步镜像或在提交中说明原因（有 `tests/test_mirror_parity.py` 守护）。
 
 ## 根目录契约与完成判定
 
