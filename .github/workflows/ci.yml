@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   test:
-    name: Python ${{ matrix.python-version }}
+    name: test · Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
@@ -41,10 +41,33 @@ jobs:
           python -m pip install -r requirements-dev.txt
 
       - name: Compile Python sources
-        run: python -m compileall -q scripts templates/shared/code_starter
+        run: python -m compileall -q scripts templates/shared/code_starter tools tools/figure/scripts tools/latex/scripts
 
       - name: Run regression tests
         run: python -m unittest discover -s tests -p "test_*.py" -v
+
+  preflight:
+    name: preflight · competition packs
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install preflight dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
 
       - name: Run competition preflights
         run: |
