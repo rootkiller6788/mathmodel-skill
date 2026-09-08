@@ -1,0 +1,41 @@
+# Normalize line endings for text files to LF in the repository.
+# Contributors on Windows still get CRLF checkouts via core.autocrlf.
+
+* text=auto eol=lf
+
+# Explicit UTF-8 text types
+*.md text
+*.py text
+*.json text
+*.yml text
+*.yaml text
+*.tex text
+*.cls text
+*.bib text
+*.txt text
+*.sh text eol=lf
+*.rc text
+*.cfg text
+*.xsd text
+
+# Batch scripts must keep CRLF to run on Windows
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary formats must never be normalized or diffed as text
+*.xlsx binary
+*.xls binary
+*.docx binary
+*.doc binary
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg binary
+*.mp4 binary
+*.zip binary
+*.rar binary
+
+# Language stat: keep vendored schema trees out of the language bar
+tools/docx/scripts/office/schemas/** linguist-vendored
