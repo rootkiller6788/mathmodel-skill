@@ -1,0 +1,33 @@
+# EditorConfig: https://editorconfig.org
+# Keeps cross-editor indentation, line endings, and trailing whitespace
+# consistent. The repository stores text files as LF (see .gitattributes).
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.py]
+indent_style = space
+indent_size = 4
+
+[*.{json,yml,yaml}]
+indent_style = space
+indent_size = 2
+
+[*.tex]
+indent_style = space
+indent_size = 4
+
+[*.{sh,m,mjs}]
+indent_style = space
+indent_size = 4
+
+[Makefile]
+indent_style = tab
