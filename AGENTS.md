@@ -22,7 +22,7 @@ This repository contains the `mathmodel-skill` product. When working inside this
 - Do not vendor or reintroduce templates, examples, papers, or binary assets without a clear redistribution license. Keep runtime dependencies and external-source boundaries accurate in `THIRD_PARTY_NOTICES.md`.
 - Keep `.codex-plugin/plugin.json` attribution fields (`author`, `homepage`, `repository`, `developerName`, `websiteURL`) consistent with the LICENSE copyright owner. Upstream authors belong in `SOURCES.md`/`THIRD_PARTY_NOTICES.md` as provenance, not as the fork author.
 - The canonical LaTeX assembly tree is `templates/latex/<comp>/main.tex`, which `scripts/render_paper.py` renders. `tools/latex/assets/templates/` and `templates/latex-alt/` are tool mirrors or fallbacks: when you change the main tree, sync the mirrors or note why not.
-- `competitions/<comp>/current_rules.md` must keep a `Last verified:` ISO date line plus at least one official source URL; regression tests assert this.
+- `competitions/<comp>/current_rules.md` must keep a verified-on ISO date (English `Last verified:` or Chinese `最近核对`) plus at least one official source URL; regression tests assert this.
 
 ## Verification
 
