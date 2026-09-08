@@ -1,0 +1,25 @@
+# Dependabot keeps GitHub Actions and the Python maintenance toolchain current.
+#
+# The pip ecosystem only auto-detects conventional manifests, so it is scoped
+# to the real requirements file under scripts/ (offline corpus-maintenance
+# tooling). Runtime "example" requirements (templates/shared/requirements.txt)
+# stay deliberately floor-pinned to follow upstream package models; do not
+# auto-open PRs against them.
+
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci"
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: "pip"
+    directory: "/scripts"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "build"
+    open-pull-requests-limit: 5
