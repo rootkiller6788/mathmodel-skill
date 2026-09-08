@@ -9,4 +9,4 @@ pdfplumber>=0.11.10
 requests>=2.34.2
 beautifulsoup4>=4.12
 Pillow>=12.3.0
-playwright>=1.45
+playwright>=1.62.0
